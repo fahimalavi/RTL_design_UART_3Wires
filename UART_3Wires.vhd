@@ -44,10 +44,10 @@ ENTITY UART_3Wires IS
     RX_DATA:       OUT std_logic_vector(7 downto 0);      -- RX DATA 
     TX_SIGNAL:     OUT std_logic:='1';                    -- TX signal 
       
-    LED_RX_STATE_MAP:    OUT std_logic_vector(3 downto 0) := "0000";      -- RX data map to STATE LED indication
-    LED_TX_STATE_MAP:    OUT std_logic_vector(3 downto 0) := "0000";      -- TX data map to STATE LED indication 
-    LED_RX_DATA_MAP:     OUT std_logic := '0';                            -- RX data map to data LED indication
-    LED_TX_DATA_MAP:     OUT std_logic := '0'                             -- TX data map to data LED indication
+    LED_RX_IDLE:          OUT std_logic := '0';      -- RX IDLE STATE LED indication (Active low)
+    LED_TX_IDLE:          OUT std_logic := '0';      -- TX IDLE STATE LED indication (Active low)
+    LED_RX_DATA_MAP:      OUT std_logic := '0';      -- RX data map to data LED indication
+    LED_TX_DATA_MAP:      OUT std_logic := '0'       -- TX data map to data LED indication
   );                
 END UART_3Wires;
 
@@ -88,9 +88,9 @@ BEGIN
             rx_main_fsm_state <= RX_STATE_START; -- Confirmed Start bit
             RX_STATE <= "01";
           end if;
-          LED_RX_STATE_MAP <= "1111";
+          LED_RX_IDLE <= '1';
         else
-          LED_RX_STATE_MAP <= "0000";
+          LED_RX_IDLE <= '0';
         end if;
       WHEN RX_STATE_START =>
         -- Increase the count value of sampling point.
@@ -160,7 +160,7 @@ BEGIN
       case (tx_main_fsm_state) is
         WHEN TX_STATE_IDLE =>
           -- In Idle state line should be asserted
-          --TX_SIGNAL <= '1';
+          TX_SIGNAL <= '1';
                
                --LED_TX_DATA_MAP <= '0';
           if(TX_DV = '1') then
@@ -170,7 +170,7 @@ BEGIN
             tx_bit_rising_edges_count <=  tx_bit_rising_edges_count + 1;
             TX_STATE <= "01";
             TX_DATA_Internal <= TX_DATA;
-            LED_TX_STATE_MAP <= "1111";
+            LED_TX_IDLE <= '1';
 
 -- Loop back retated code.
 --pragma synthesis_off
@@ -181,11 +181,11 @@ BEGIN
             tx_bit_rising_edges_count <=  tx_bit_rising_edges_count + 1;
             TX_STATE <= "01";
             TX_DATA_Internal <= RX_DATA_INTERNAL;
-            LED_TX_STATE_MAP <= "1111";
+            LED_TX_IDLE <= '1';
 --pragma synthesis_on
 
           else
-            LED_TX_STATE_MAP <= "0000";
+            LED_TX_IDLE <= '0';
           end if;
         WHEN TX_STATE_START =>
           tx_bit_rising_edges_count <=  tx_bit_rising_edges_count + 1;
