@@ -2,7 +2,7 @@
 ## Description
 A VHDL three wire UART for communicating over a serial link.
 
-Note: The default settings for the link are 115200 BAUD, 8 Data, 1 Stop, No parity.
+Note: The default settings are 115200 BAUD, 8 Data, 1 Stop, No parity.
 
 * Total logic elements	253 
 * Total registers	146
